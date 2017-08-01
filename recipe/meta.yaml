@@ -22,35 +22,32 @@ source:
 
 build:
   number: 0
-  skip: True  # [win and py36]
   features:
-    - vc9     # [win and py27]
-    - vc10    # [win and py34]
-    - vc14    # [win and py>=35]
-  detect_binary_files_with_prefix: True
+    - vc{{ vc }}   # [win]
+  run_exports:
+    # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
+    #    This pinning is using the implicitly defined output for the top-level recipe.
+    #    We use pin_subpackage here so that we have more control over the pinning.
+    - {{ pin_subpackage('hdf5', min_pin='x.x.x', max_pin='x.x.x') }}
 
 requirements:
   build:
-    - toolchain
-    - python         # [win]
     - libtool        # [unix]
     - cmake >=3.1
-    - zlib 1.2.*
-    - gcc  # [osx]
-    - libgfortran  # [linux]
-    - vc 9  # [win and py27]
-    - vc 10  # [win and py34]
-    - vc 14  # [win and py>=35]
-  run:
-    - zlib 1.2.*
-    - libgfortran  # [not win]
-    - vc 9  # [win and py27]
-    - vc 10  # [win and py34]
-    - vc 14  # [win and py>=35]
+    - zlib
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - {{ compiler('fortran') }}
+
+# no explicit run deps.  zlib is one, and C/C++/Fortran runtimes are others, but these are taken care of
+#   with conda-build 3's run_exports in those packages.  They will be run reqs in the final package.  See
+#   for yourself by running conda render on this recipe.
 
 test:
   requires:
-    - gcc  # [osx]
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - {{ compiler('fortran') }}
 
   files:
     - h5_cmprss.c
@@ -128,3 +125,4 @@ extra:
     - ocefpaf
     - astrofrog
     - marqh
+    - msarahan
