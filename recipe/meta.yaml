@@ -17,6 +17,11 @@ source:
     - test_Makefile.in.patch
     # Disable shared Fortran API building on OSX
     - osx_configure.patch  # [osx]
+    # https://bugzilla.redhat.com/show_bug.cgi?id=1078173
+    # http://pkgs.fedoraproject.org/cgit/rpms/hdf5.git/tree/hdf5-ldouble-ppc64le.patch?h=epel7
+    # updated patch for 1.10.1
+    - 0001-ppc64le-uses-special-algorithm-for-long-double.patch  # [ppc64le]
+    - 0002-long-double-conversion-tests-on-ppc64le.patch         # [ppc64le]
 
 build:
   number: 2
