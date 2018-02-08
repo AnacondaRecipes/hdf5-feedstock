@@ -27,7 +27,7 @@ source:
     - hdf5-ldouble-ppc64le.patch
 
 build:
-  number: 0
+  number: 1
   run_exports:
     # https://abi-laboratory.pro/tracker/timeline/hdf5/
     - {{ pin_subpackage('hdf5', max_pin='x.x') }}
