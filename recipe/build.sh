@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#TODO: not sure why this or the LIBRARY_PATH is necessary.
 if [ "$(uname)" == "Darwin" ]; then
     export CXX="${CXX} -stdlib=libc++"
 fi
