@@ -25,7 +25,11 @@ export GFORTRAN=$(basename ${GFORTRAN})
             --with-ssl
 
 make -j "${CPU_COUNT}" ${VERBOSE_AT}
-make check
+if [[ ! ${HOST} =~ .*powerpc64le.* ]]; then
+  # https://github.com/h5py/h5py/issues/817
+  # https://forum.hdfgroup.org/t/hdf5-1-10-long-double-conversions-tests-failed-in-ppc64le/4077
+  make check
+fi
 make install
 
 rm -rf $PREFIX/share/hdf5_examples
