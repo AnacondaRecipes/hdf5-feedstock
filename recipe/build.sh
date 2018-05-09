@@ -1,9 +1,5 @@
 #!/bin/bash
 
-if [ "$(uname)" == "Darwin" ]; then
-    export CXX="${CXX} -stdlib=libc++"
-fi
-
 export LIBRARY_PATH="${PREFIX}/lib"
 
 ./configure --prefix="${PREFIX}" \
