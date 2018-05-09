@@ -1,7 +1,5 @@
 {% set version = "1.10.2" %}
-
 {% set maj_min_ver = ".".join(version.split(".")[:2]) %}
-
 
 package:
   name: hdf5

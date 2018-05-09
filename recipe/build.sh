@@ -2,6 +2,12 @@
 
 export LIBRARY_PATH="${PREFIX}/lib"
 
+export CC=$(basename ${CC})
+export CXX=$(basename ${CXX})
+export F95=$(basename ${F95})
+export FC=$(basename ${FC})
+export GFORTRAN=$(basename ${GFORTRAN})
+
 ./configure --prefix="${PREFIX}" \
             --host="${HOST}" \
             --enable-linux-lfs \
