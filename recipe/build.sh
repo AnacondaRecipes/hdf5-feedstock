@@ -1,10 +1,12 @@
 #!/bin/bash
 
-if [ "$(uname)" == "Darwin" ]; then
-    export CXX="${CXX} -stdlib=libc++"
-fi
-
 export LIBRARY_PATH="${PREFIX}/lib"
+
+export CC=$(basename ${CC})
+export CXX=$(basename ${CXX})
+export F95=$(basename ${F95})
+export FC=$(basename ${FC})
+export GFORTRAN=$(basename ${GFORTRAN})
 
 ./configure --prefix="${PREFIX}" \
             --host="${HOST}" \
@@ -23,8 +25,7 @@ export LIBRARY_PATH="${PREFIX}/lib"
             --enable-clear-file-buffers \
             --with-ssl
 
-#             --disable-static \
-make -j "${CPU_COUNT}"
+make -j "${CPU_COUNT}" ${VERBOSE_AT}
 make check
 make install
 
