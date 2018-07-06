@@ -10,6 +10,7 @@ export GFORTRAN=$(basename ${GFORTRAN})
 
 ./configure --prefix="${PREFIX}" \
             --host="${HOST}" \
+            --build="${BUILD}" \
             --enable-linux-lfs \
             --with-zlib="${PREFIX}" \
             --with-pthread=yes  \
