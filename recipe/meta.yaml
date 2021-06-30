@@ -1,4 +1,4 @@
-{% set version = "1.12.0" %}
+{% set version = "1.12.1" %}
 {% set maj_min_ver = ".".join(version.split(".")[:2]) %}
 
 package:
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-{{ maj_min_ver }}/hdf5-{{ version }}/src/hdf5-{{ version }}.tar.gz
-  sha256: a62dcb276658cb78e6795dd29bf926ed7a9bc4edf6e77025cd2c689a8f97c17a
+  sha256: d5a89e26beae0bc03ad18a0b0d1d3d75f87c32047879d25da11970cb5c4662a3
   patches:
     # Patches the test suite to skip the cache, cache_image, and fheap tests
     # This test has been found to rather resource intensive.
