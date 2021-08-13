@@ -51,7 +51,7 @@ test:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - {{ compiler('fortran') }}
-
+    - pkg-config  # [not win]
   files:
     - h5_cmprss.c
     - h5tutr_cmprss.cpp

@@ -1,0 +1,4 @@
+# this is a hack for libtool, which doesn't know about SDK 11.x, so we use here 10.15 instead
+MACOSX_DEPLOYMENT_TARGET:  # [osx and arm64]
+  - 10.15                  # [osx and arm64]
+

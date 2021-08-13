@@ -4,7 +4,9 @@ set -e
 # Ping @msarahan: This is causing me trouble due to Apple not having released the source
 # for the latest ld64 yet. Is there any way to have stuff from the build matrix used in
 # the test phase?
+if [[ $(uname -m) != arm64 ]]; then
 export CONDA_BUILD_SYSROOT=/opt/MacOSX10.9.sdk
+fi
 
 # Test C compiler
 echo "Testing h5cc"
