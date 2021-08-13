@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Get an updated config.sub and config.guess
+cp -r ${BUILD_PREFIX}/share/libtool/build-aux/config.* ./config
+cp -r ${BUILD_PREFIX}/share/libtool/build-aux/config.* ./bin
+
 export LIBRARY_PATH="${PREFIX}/lib"
 
 export CC=$(basename ${CC})
