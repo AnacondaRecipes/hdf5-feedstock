@@ -27,6 +27,7 @@ export GFORTRAN=$(basename ${GFORTRAN})
             --enable-unsupported \
             --enable-using-memchecker \
             --enable-clear-file-buffers \
+            --enable-ros3-vfd \
             --with-ssl
 
 make -j "${CPU_COUNT}" ${VERBOSE_AT}
