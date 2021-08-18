@@ -23,7 +23,7 @@ source:
     - 0002-long-double-conversion-tests-on-ppc64le.patch         # [ppc64le]
 
 build:
-  number: 0
+  number: 1
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.

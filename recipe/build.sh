@@ -22,6 +22,7 @@ export GFORTRAN=$(basename ${GFORTRAN})
             --enable-fortran \
             --enable-fortran2003 \
             --with-default-plugindir="${PREFIX}/lib/hdf5/plugin" \
+            --with-default-api-version=v18 \
             --enable-threadsafe \
             --enable-build-mode=production \
             --enable-unsupported \
