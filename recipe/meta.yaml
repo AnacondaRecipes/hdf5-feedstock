@@ -42,6 +42,9 @@ requirements:
     - cmake >=3.1    # [win]
     - jom            # [win]
     - patch          # [ppc64le]
+    # For some reason the `strings` command is not available on aarch64 without
+    # this explicit dependency.
+    - binutils       # [aarch64]
   host:
     - zlib
     - libcurl
