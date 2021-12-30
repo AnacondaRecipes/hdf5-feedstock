@@ -29,6 +29,8 @@ build:
     #    This pinning is using the implicitly defined output for the top-level recipe.
     #    We use pin_subpackage here so that we have more control over the pinning.
     - {{ pin_subpackage('hdf5', min_pin='x.x.x', max_pin='x.x.x') }}
+  ignore_run_exports:
+    - {{ compiler('fortran') }}
 
 requirements:
   build:
