@@ -31,6 +31,8 @@ build:
   ignore_run_exports:
     - {{ compiler('fortran') }}
     - libgfortran5  # [osx and arm64]
+    - libcurl  # [win]
+    - openssl  # [win]
 
 requirements:
   build:
