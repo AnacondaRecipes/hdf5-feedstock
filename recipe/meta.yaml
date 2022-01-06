@@ -9,11 +9,10 @@ source:
   url: https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-{{ maj_min_ver }}/hdf5-{{ version }}/src/hdf5-{{ version }}.tar.gz
   sha256: 79c66ff67e666665369396e9c90b32e238e501f345afd2234186bfb8331081ca
   patches:
-    # Patches the test suite to skip the cache, cache_image, and fheap tests
-    # This test has been found to rather resource intensive.
-    # In particular, it caused Travis CI's Mac builds to hang.
-    # Given that we simply skip the test on all platforms.
-    #- test_Makefile.in.patch
+    # Patches the test suite to skip the cache, cache_image, and fheap tests,
+    # which haves been found to be rather resource intensive. In particular,
+    # they cause Mac builds to hang on osx-arm64.
+    - test_Makefile.in.patch  # [osx and arm64]
     # Disable shared Fortran API building on OSX
     - osx_configure.patch  # [osx]
     # https://bugzilla.redhat.com/show_bug.cgi?id=1078173
