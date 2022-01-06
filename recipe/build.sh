@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Get an updated config.sub and config.guess
 cp -r ${BUILD_PREFIX}/share/libtool/build-aux/config.* ./config
@@ -11,6 +11,12 @@ export CXX=$(basename ${CXX})
 export F95=$(basename ${F95})
 export FC=$(basename ${FC})
 export GFORTRAN=$(basename ${GFORTRAN})
+
+if [ "${target_platform}" = "osx-64" ]; then
+    # Work around a problem on osx-64 where apparently the SDK libdirs are
+    # not in the library search path.
+    export LDFLAGS="${LDFLAGS} -L${SDKROOT}/usr/lib -L${SDKROOT}/usr/lib/system"
+fi
 
 ./configure --prefix="${PREFIX}" \
             --host="${HOST}" \
