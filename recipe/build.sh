@@ -1,16 +1,18 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Get an updated config.sub and config.guess
 cp -r ${BUILD_PREFIX}/share/libtool/build-aux/config.* ./config
 cp -r ${BUILD_PREFIX}/share/libtool/build-aux/config.* ./bin
-
-export LIBRARY_PATH="${PREFIX}/lib"
 
 export CC=$(basename ${CC})
 export CXX=$(basename ${CXX})
 export F95=$(basename ${F95})
 export FC=$(basename ${FC})
 export GFORTRAN=$(basename ${GFORTRAN})
+
+echo "--tkoch--"
+ls -l /opt
+echo "--tkoch--"
 
 ./configure --prefix="${PREFIX}" \
             --host="${HOST}" \
