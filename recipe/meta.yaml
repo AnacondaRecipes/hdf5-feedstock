@@ -39,7 +39,9 @@ requirements:
     - make           # [not win]
     - cmake >=3.1    # [win]
     - jom            # [win]
-  host:
+    - patch       # [not win]
+    - m2-patch    # [win]
+   host:
     - zlib
     - libcurl
     - openssl
