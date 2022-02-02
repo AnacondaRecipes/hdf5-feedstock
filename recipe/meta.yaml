@@ -41,7 +41,7 @@ requirements:
     - jom            # [win]
     - patch       # [not win]
     - m2-patch    # [win]
-   host:
+  host:
     - zlib
     - libcurl
     - openssl
