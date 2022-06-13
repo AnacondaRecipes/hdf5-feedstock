@@ -24,6 +24,8 @@ source:
 
 build:
   number: 1
+  # This version does not support osx-arm64.
+  skip: True  # [osx and arm64]
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -39,6 +41,7 @@ requirements:
     - make           # [not win]
     - cmake >=3.1    # [win]
     - jom            # [win]
+    - patch          # [osx or ppc64le]
   host:
     - zlib
 
