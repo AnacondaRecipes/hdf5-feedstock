@@ -56,8 +56,6 @@ test:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - {{ compiler('fortran') }}
-    # For the `strings` command
-    - binutils  # [linux]
 
   files:
     - h5_cmprss.c
