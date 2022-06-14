@@ -24,6 +24,8 @@ source:
 
 build:
   number: 2
+  ignore_run_exports:
+    - libgfortran5  # [osx]
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -38,9 +40,7 @@ requirements:
     - libtool        # [not win]
     - make           # [not win]
     - cmake >=3.1    # [win]
-    - jom            # [win]
     - patch       # [not win]
-    - m2-patch    # [win]
   host:
     - zlib
     - libcurl
