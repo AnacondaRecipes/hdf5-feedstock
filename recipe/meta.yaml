@@ -43,7 +43,6 @@ requirements:
     - libtool        # [not win]
     - make           # [not win]
     - cmake >=3.1    # [win]
-    - m2-perl        # [win]
     - patch          # [osx or ppc64le]
   host:
     - zlib
