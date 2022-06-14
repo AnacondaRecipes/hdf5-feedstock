@@ -28,6 +28,7 @@ build:
   skip: True  # [osx and arm64]
   ignore_run_exports:
     - libgfortran5  # [osx]
+    - zlib          # [win]
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
