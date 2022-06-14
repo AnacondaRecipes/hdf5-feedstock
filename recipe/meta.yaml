@@ -43,12 +43,8 @@ requirements:
     - patch       # [not win]
   host:
     - zlib
-    - libcurl
-    - openssl
-  run:
-    - zlib
-    - libcurl
-    - openssl
+    - libcurl  # [not win]
+    - openssl  # [not win]
 
 # no explicit run deps.  zlib is one, and C/C++/Fortran runtimes are others, but these are taken care of
 #   with conda-build 3's run_exports in those packages.  They will be run reqs in the final package.  See
