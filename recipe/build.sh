@@ -12,6 +12,10 @@ export F95=$(basename ${F95})
 export FC=$(basename ${FC})
 export GFORTRAN=$(basename ${GFORTRAN})
 
+if [ $(uname -s) = "Linux" ] && [ ! -f "${BUILD_PREFIX}/bin/strings" ]; then
+    ln -s "${BUILD}-strings" "${BUILD_PREFIX}/bin/strings"
+fi
+
 ./configure --prefix="${PREFIX}" \
             --host="${HOST}" \
             --build="${BUILD}" \

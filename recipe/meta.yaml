@@ -23,7 +23,9 @@ source:
     - 0002-long-double-conversion-tests-on-ppc64le.patch         # [ppc64le]
 
 build:
-  number: 1
+  number: 2
+  ignore_run_exports:
+    - libgfortran5  # [osx]
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -38,17 +40,11 @@ requirements:
     - libtool        # [not win]
     - make           # [not win]
     - cmake >=3.1    # [win]
-    - jom            # [win]
     - patch       # [not win]
-    - m2-patch    # [win]
   host:
     - zlib
-    - libcurl
-    - openssl
-  run:
-    - zlib
-    - libcurl
-    - openssl
+    - libcurl  # [not win]
+    - openssl  # [not win]
 
 # no explicit run deps.  zlib is one, and C/C++/Fortran runtimes are others, but these are taken care of
 #   with conda-build 3's run_exports in those packages.  They will be run reqs in the final package.  See
@@ -122,7 +118,7 @@ test:
     {% endfor %}
 
 about:
-  home: http://www.hdfgroup.org/HDF5/
+  home: https://www.hdfgroup.org/HDF5/
   license: HDF5
   license_family: BSD
   license_file: COPYING
