@@ -23,7 +23,11 @@ source:
     - 0002-long-double-conversion-tests-on-ppc64le.patch         # [ppc64le]
 
 build:
-  number: 0
+  number: 1
+  # This version does not support osx-arm64.
+  skip: True  # [osx and arm64]
+  ignore_run_exports:
+    - libgfortran5  # [osx]
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -38,7 +42,7 @@ requirements:
     - libtool        # [not win]
     - make           # [not win]
     - cmake >=3.1    # [win]
-    - jom            # [win]
+    - patch          # [osx or ppc64le]
   host:
     - zlib
 
@@ -114,7 +118,7 @@ test:
     {% endfor %}
 
 about:
-  home: http://www.hdfgroup.org/HDF5/
+  home: https://www.hdfgroup.org/HDF5/
   license: HDF5
   license_family: BSD
   license_file: COPYING

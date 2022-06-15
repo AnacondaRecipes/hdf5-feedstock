@@ -20,9 +20,9 @@ cmake -G "NMake Makefiles" ^
 if errorlevel 1 exit 1
 
 :: Build C libraries and tools.
-jom
+cmake --build .
 if errorlevel 1 exit 1
 
 :: Install step.
-jom install
+cmake --install .
 if errorlevel 1 exit 1
