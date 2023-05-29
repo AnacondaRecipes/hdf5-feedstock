@@ -31,6 +31,8 @@ build:
     #    This pinning is using the implicitly defined output for the top-level recipe.
     #    We use pin_subpackage here so that we have more control over the pinning.
     - {{ pin_subpackage('hdf5', min_pin='x.x.x', max_pin='x.x.x') }}
+    - libcurl  # [win]
+    - openssl  # [win]
 
 requirements:
   build:
@@ -42,9 +44,13 @@ requirements:
     - cmake >=3.1    # [win]
     - patch       # [not win]
   host:
-    - zlib
-    - libcurl  # [not win]
-    - openssl  # [not win]
+    - zlib {{ zlib }}
+    - libcurl 7.88.1  # [not win]
+    - openssl {{ openssl }}  # [not win]
+    # Pin to 11.2.0 until we figure out why we get "Error: Kind 16 not supported for type REAL at (1)"
+    - libgfortran5 11.2.0  # [unix]
+  run:
+    - openssl 3.*
 
 # no explicit run deps.  zlib is one, and C/C++/Fortran runtimes are others, but these are taken care of
 #   with conda-build 3's run_exports in those packages.  They will be run reqs in the final package.  See
@@ -118,16 +124,18 @@ test:
     {% endfor %}
 
 about:
-  home: https://www.hdfgroup.org/HDF5/
-  license: HDF5
+  home: https://www.hdfgroup.org/solutions/hdf5/
+  license: OTHER
   license_family: BSD
-  license_file: COPYING
+  license_file:
+    - COPYING
+    - COPYING_LBNL_HDF5
   summary: HDF5 is a data model, library, and file format for storing and managing data
   description: |
     HDF5 supports an unlimited variety of datatypes, and is designed for
     flexible and efficient I/O and for high volume and complex data.
-  doc_url: https://www.hdfgroup.org/HDF5/doc/
-  dev_url: https://www.hdfgroup.org/HDF5/release/obtain5.html
+  doc_url: https://docs.hdfgroup.org/hdf5/develop/
+  dev_url: https://docs.hdfgroup.org/hdf5/develop/
 
 extra:
   recipe-maintainers:
