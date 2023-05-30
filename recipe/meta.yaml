@@ -21,6 +21,7 @@ source:
     # updated patch for 1.10.1
     - 0001-ppc64le-uses-special-algorithm-for-long-double.patch  # [ppc64le]
     - 0002-long-double-conversion-tests-on-ppc64le.patch         # [ppc64le]
+    - 0003-fix-tests.patch
 
 build:
   number: 2
