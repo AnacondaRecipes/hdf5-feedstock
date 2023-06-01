@@ -123,6 +123,29 @@ test:
     - otool -L $PREFIX/lib/lib{{ each_hdf5_lib }}.dylib                      # [osx]
     {% endfor %}
 
+    # Test C compiler
+    - echo "Testing h5cc"            # [unix]
+    - h5cc -show                     # [unix]
+    - h5cc h5_cmprss.c -o h5_cmprss  # [unix]
+    - ./h5_cmprss                    # [unix]
+
+    # Test C++ compiler
+    - echo "Testing h5c++"                      # [unix]
+    - h5c++ -show                               # [unix]
+    - h5c++ h5tutr_cmprss.cpp -o h5tutr_cmprss  # [unix]
+    - ./h5tutr_cmprss                           # [unix]
+
+    # Test Fortran 90 compiler
+    - echo "Testing h5fc"              # [unix]
+    - h5fc -show                       # [unix]
+    - h5fc h5_cmprss.f90 -o h5_cmprss  # [unix]
+    - ./h5_cmprss                      # [unix]
+
+    # Test Fortran 2003 compiler, note that the file has a 90 extension
+    - echo "Testing h5fc for Fortran 2003"                   # [unix]
+    - h5fc compound_fortran2003.f90 -o compound_fortran2003  # [unix]
+    - ./compound_fortran2003                                 # [unix]
+
 about:
   home: https://www.hdfgroup.org/solutions/hdf5/
   license: OTHER
