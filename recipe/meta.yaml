@@ -26,13 +26,13 @@ build:
   number: 3
   ignore_run_exports:
     - libgfortran5  # [osx]
+    - libcurl  # [win]
+    - openssl  # [win]
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
     #    We use pin_subpackage here so that we have more control over the pinning.
     - {{ pin_subpackage('hdf5', min_pin='x.x.x', max_pin='x.x.x') }}
-    - libcurl  # [win]
-    - openssl  # [win]
 
 requirements:
   build:
