@@ -26,8 +26,6 @@ build:
   number: 3
   ignore_run_exports:
     - libgfortran5  # [osx]
-    - libcurl  # [win]
-    - openssl  # [win]
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -50,7 +48,7 @@ requirements:
     # Pin to 11.2.0 until we figure out why we get "Error: Kind 16 not supported for type REAL at (1)"
     - libgfortran5 11.2.0  # [unix]
   run:
-    - openssl 3.*
+    - openssl 3.*  # [not win]
 
 # no explicit run deps.  zlib is one, and C/C++/Fortran runtimes are others, but these are taken care of
 #   with conda-build 3's run_exports in those packages.  They will be run reqs in the final package.  See
