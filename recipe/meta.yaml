@@ -23,7 +23,7 @@ source:
     - 0002-long-double-conversion-tests-on-ppc64le.patch         # [ppc64le]
 
 build:
-  number: 2
+  number: 3
   ignore_run_exports:
     - libgfortran5  # [osx]
   run_exports:
@@ -42,9 +42,13 @@ requirements:
     - cmake >=3.1    # [win]
     - patch       # [not win]
   host:
-    - zlib
-    - libcurl  # [not win]
-    - openssl  # [not win]
+    - zlib {{ zlib }}
+    - libcurl 7.88.1  # [not win]
+    - openssl {{ openssl }}  # [not win]
+    # Pin to 11.2.0 until we figure out why we get "Error: Kind 16 not supported for type REAL at (1)"
+    - libgfortran5 11.2.0  # [unix]
+  run:
+    - openssl 3.*  # [not win]
 
 # no explicit run deps.  zlib is one, and C/C++/Fortran runtimes are others, but these are taken care of
 #   with conda-build 3's run_exports in those packages.  They will be run reqs in the final package.  See
@@ -117,17 +121,42 @@ test:
     - otool -L $PREFIX/lib/lib{{ each_hdf5_lib }}.dylib                      # [osx]
     {% endfor %}
 
+    # Test C compiler
+    - echo "Testing h5cc"            # [unix]
+    - h5cc -show                     # [unix]
+    - h5cc h5_cmprss.c -o h5_cmprss  # [unix]
+    - ./h5_cmprss                    # [unix]
+
+    # Test C++ compiler
+    - echo "Testing h5c++"                      # [unix]
+    - h5c++ -show                               # [unix]
+    - h5c++ h5tutr_cmprss.cpp -o h5tutr_cmprss  # [unix]
+    - ./h5tutr_cmprss                           # [unix]
+
+    # Test Fortran 90 compiler
+    - echo "Testing h5fc"              # [unix]
+    - h5fc -show                       # [unix]
+    - h5fc h5_cmprss.f90 -o h5_cmprss  # [unix]
+    - ./h5_cmprss                      # [unix]
+
+    # Test Fortran 2003 compiler, note that the file has a 90 extension
+    - echo "Testing h5fc for Fortran 2003"                   # [unix]
+    - h5fc compound_fortran2003.f90 -o compound_fortran2003  # [unix]
+    - ./compound_fortran2003                                 # [unix]
+
 about:
-  home: https://www.hdfgroup.org/HDF5/
-  license: HDF5
+  home: https://www.hdfgroup.org/solutions/hdf5/
+  license: OTHER
   license_family: BSD
-  license_file: COPYING
+  license_file:
+    - COPYING
+    - COPYING_LBNL_HDF5
   summary: HDF5 is a data model, library, and file format for storing and managing data
   description: |
     HDF5 supports an unlimited variety of datatypes, and is designed for
     flexible and efficient I/O and for high volume and complex data.
-  doc_url: https://www.hdfgroup.org/HDF5/doc/
-  dev_url: https://www.hdfgroup.org/HDF5/release/obtain5.html
+  doc_url: https://docs.hdfgroup.org/hdf5/develop/
+  dev_url: https://docs.hdfgroup.org/hdf5/develop/
 
 extra:
   recipe-maintainers:
