@@ -136,7 +136,7 @@ about:
   description: |
     HDF5 supports an unlimited variety of datatypes, and is designed for
     flexible and efficient I/O and for high volume and complex data.
-  doc_url: https://docs.hdfgroup.org/hdf5/develop/
+  doc_url: https://support.hdfgroup.org/documentation/index.html
   dev_url: https://github.com/HDFGroup/hdf5
 
 extra:
