@@ -29,7 +29,7 @@ requirements:
     - zlib {{ zlib }}
     - libcurl 7.88.1  # [not win]
     - openssl {{ openssl }}  # [not win]
-    - libgfortran5 11.3.0  # [unix]
+    - libgfortran5 11.2.0  # [unix]
   run:
     - openssl 3.*  # [not win]
 
