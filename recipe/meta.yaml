@@ -1,4 +1,4 @@
-{% set version = "1.12.1" %}
+{% set version = "1.14.5" %}
 {% set maj_min_ver = ".".join(version.split(".")[:2]) %}
 
 package:
@@ -6,26 +6,11 @@ package:
   version: {{ version }}
 
 source:
-  url: https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-{{ maj_min_ver }}/hdf5-{{ version }}/src/hdf5-{{ version }}.tar.gz
-  sha256: 79c66ff67e666665369396e9c90b32e238e501f345afd2234186bfb8331081ca
-  patches:
-    # Patches the test suite to skip the cache, cache_image, and fheap tests
-    # This test has been found to rather resource intensive.
-    # In particular, it caused Travis CI's Mac builds to hang.
-    # Given that we simply skip the test on all platforms.
-    #- test_Makefile.in.patch
-    # Disable shared Fortran API building on OSX
-    - osx_configure.patch  # [osx]
-    # https://bugzilla.redhat.com/show_bug.cgi?id=1078173
-    # http://pkgs.fedoraproject.org/cgit/rpms/hdf5.git/tree/hdf5-ldouble-ppc64le.patch?h=epel7
-    # updated patch for 1.10.1
-    - 0001-ppc64le-uses-special-algorithm-for-long-double.patch  # [ppc64le]
-    - 0002-long-double-conversion-tests-on-ppc64le.patch         # [ppc64le]
+  url: https://github.com/HDFGroup/hdf5/releases/download/hdf5_{{ version }}/hdf5-{{ version }}.tar.gz
+  sha256: ec2e13c52e60f9a01491bb3158cb3778c985697131fc6a342262d32a26e58e44
 
 build:
-  number: 3
-  ignore_run_exports:
-    - libgfortran5  # [osx]
+  number: 0
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -40,12 +25,10 @@ requirements:
     - libtool        # [not win]
     - make           # [not win]
     - cmake >=3.1    # [win]
-    - patch       # [not win]
   host:
     - zlib {{ zlib }}
     - libcurl 7.88.1  # [not win]
     - openssl {{ openssl }}  # [not win]
-    # Pin to 11.2.0 until we figure out why we get "Error: Kind 16 not supported for type REAL at (1)"
     - libgfortran5 11.2.0  # [unix]
   run:
     - openssl 3.*  # [not win]
@@ -81,8 +64,6 @@ test:
 
     # Verify CLI tools.
     {% set hdf5_cmds = [
-        "gif2h5",
-        "h52gif",
         "h5copy",
         "h5debug",
         "h5diff",
@@ -155,8 +136,8 @@ about:
   description: |
     HDF5 supports an unlimited variety of datatypes, and is designed for
     flexible and efficient I/O and for high volume and complex data.
-  doc_url: https://docs.hdfgroup.org/hdf5/develop/
-  dev_url: https://docs.hdfgroup.org/hdf5/develop/
+  doc_url: https://support.hdfgroup.org/documentation/index.html
+  dev_url: https://github.com/HDFGroup/hdf5
 
 extra:
   recipe-maintainers:
