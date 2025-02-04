@@ -10,7 +10,7 @@ source:
   sha256: ec2e13c52e60f9a01491bb3158cb3778c985697131fc6a342262d32a26e58e44
 
 build:
-  number: 0
+  number: 1
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -22,9 +22,8 @@ requirements:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - {{ compiler('fortran') }}
-    - libtool        # [not win]
-    - make           # [not win]
-    - cmake >=3.1    # [win]
+    - make  # [linux]
+    - cmake >=3.1 
   host:
     - zlib {{ zlib }}
     - libcurl 7.88.1  # [not win]
@@ -55,7 +54,6 @@ test:
         "h5c++",
         "h5cc",
         "h5perf_serial",
-        "h5redeploy",
         "h5fc"
     ] %}
     {% for each_hdf5_unix_cmd in hdf5_unix_cmds %}
@@ -90,7 +88,6 @@ test:
         "hdf5_hl_cpp"
     ] %}
     {% for each_hdf5_lib in hdf5_libs %}
-    - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}.a                           # [unix]
     - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}.dylib                       # [osx]
     - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}.so                          # [linux]
     - if not exist %PREFIX%\\Library\\lib\\{{ each_hdf5_lib }}.lib exit 1    # [win]
@@ -106,6 +103,7 @@ test:
     - echo "Testing h5cc"            # [unix]
     - h5cc -show                     # [unix]
     - h5cc h5_cmprss.c -o h5_cmprss  # [unix]
+    - export DYLD_LIBRARY_PATH=$PREFIX/lib:$DYLD_LIBRARY_PATH  # [osx]
     - ./h5_cmprss                    # [unix]
 
     # Test C++ compiler
