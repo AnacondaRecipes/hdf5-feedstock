@@ -15,22 +15,30 @@ fi
 mkdir build
 cd build
 
-cmake -G "Unix Makefiles" \
-      -D CMAKE_BUILD_TYPE=RELEASE \
-      -D CMAKE_PREFIX_PATH="$PREFIX" \
-      -D CMAKE_INSTALL_PREFIX="$PREFIX" \
-      -D HDF5_BUILD_CPP_LIB=ON \
-      -D HDF5_BUILD_FORTRAN=ON \
-      -D BUILD_SHARED_LIBS=ON \
-      -D BUILD_STATIC_LIBS=OFF \
-      -D HDF5_BUILD_HL_LIB=ON \
-      -D HDF5_BUILD_TOOLS=ON \
-      -D HDF5_ENABLE_Z_LIB_SUPPORT=ON \
-      -D HDF5_ENABLE_SZIP_SUPPORT=OFF \
-      -D HDF5_ENABLE_THREADSAFE=ON \
-      -D ALLOW_UNSUPPORTED=ON \
-      -D ZLIB_DIR="$PREFIX" \
-      "$SRC_DIR"
+cmake_flags=(
+    -D CMAKE_BUILD_TYPE=RELEASE
+    -D CMAKE_PREFIX_PATH="$PREFIX"
+    -D CMAKE_INSTALL_PREFIX="$PREFIX"
+    -D HDF5_BUILD_CPP_LIB=ON
+    -D HDF5_BUILD_FORTRAN=ON
+    -D BUILD_SHARED_LIBS=ON
+    -D BUILD_STATIC_LIBS=ON
+    -D HDF5_BUILD_HL_LIB=ON
+    -D HDF5_BUILD_TOOLS=ON
+    -D HDF5_ENABLE_Z_LIB_SUPPORT=ON
+    -D HDF5_ENABLE_SZIP_SUPPORT=OFF
+    -D HDF5_ENABLE_THREADSAFE=ON
+    -D ALLOW_UNSUPPORTED=ON
+    -D ZLIB_DIR="$PREFIX"
+)
+
+# Apply extra flags for Linux only
+if [[ $(uname) == "Linux" ]]; then
+    cmake_flags+=(-D CMAKE_C_FLAGS="-pthread -Wl,-rpath,${PREFIX}/lib -L${PREFIX}/lib -lz")
+fi
+
+
+cmake -G "Unix Makefiles" "${cmake_flags[@]}" "$SRC_DIR"
 
 # Build C libraries and tools.
 cmake --build .
