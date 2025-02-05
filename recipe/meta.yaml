@@ -85,7 +85,7 @@ test:
         "hdf5",
         "hdf5_cpp",
         "hdf5_hl",
-        "hdf5_hl_cpp"
+        "hdf5_hl_cpp",
     ] %}
     {% for each_hdf5_lib in hdf5_libs %}
     - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}.a                           # [unix]

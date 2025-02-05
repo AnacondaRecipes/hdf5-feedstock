@@ -45,3 +45,18 @@ cmake --build .
 cmake --install .
 
 rm -rf $PREFIX/share/hdf5_examples
+
+# Restore compatibility with hdf5 built with autotools
+# Create symlinks for libhdf5hl* from existing libhdf5_hl*
+for file in $PREFIX/lib/libhdf5_hl*; do
+    # Extract base filename
+    base_name=$(basename "$file")
+
+    # Replace "libhdf5_hl" with "libhdf5hl" in the filename
+    new_name="${base_name/libhdf5_hl/libhdf5hl}"
+
+    # Create symlink only if the destination does not exist
+    if [[ ! -e "$PREFIX/lib/$new_name" ]]; then
+        ln -s "$file" "$PREFIX/lib/$new_name"
+    fi
+done
