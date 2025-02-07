@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Get an updated config.sub and config.guess
-cp -r ${BUILD_PREFIX}/share/libtool/build-aux/config.* ./config
-cp -r ${BUILD_PREFIX}/share/libtool/build-aux/config.* ./bin
-
 export LIBRARY_PATH="${PREFIX}/lib"
 
 export CC=$(basename ${CC})
@@ -16,32 +12,51 @@ if [ $(uname -s) = "Linux" ] && [ ! -f "${BUILD_PREFIX}/bin/strings" ]; then
     ln -s "${BUILD}-strings" "${BUILD_PREFIX}/bin/strings"
 fi
 
-./configure --prefix="${PREFIX}" \
-            --host="${HOST}" \
-            --build="${BUILD}" \
-            --enable-linux-lfs \
-            --with-zlib="${PREFIX}" \
-            --with-pthread=yes  \
-            --enable-cxx \
-            --enable-fortran \
-            --enable-fortran2003 \
-            --with-default-plugindir="${PREFIX}/lib/hdf5/plugin" \
-            --with-default-api-version=v18 \
-            --enable-threadsafe \
-            --enable-build-mode=production \
-            --enable-unsupported \
-            --enable-using-memchecker \
-            --enable-clear-file-buffers \
-            --enable-ros3-vfd \
-            --with-ssl
+mkdir build
+cd build
 
-make -j "${CPU_COUNT}" ${VERBOSE_AT}
-if [[ ! "${HOST}" =~ .*powerpc64le.* ]] && [[ "${OSX_ARCH}" != "x86_64" ]]; then
-  # https://github.com/h5py/h5py/issues/817
-  # https://forum.hdfgroup.org/t/hdf5-1-10-long-double-conversions-tests-failed-in-ppc64le/4077
-  # One test is also failing on macos x86_64
-  make check
+cmake_flags=(
+    -D CMAKE_BUILD_TYPE=RELEASE
+    -D CMAKE_PREFIX_PATH="$PREFIX"
+    -D CMAKE_INSTALL_PREFIX="$PREFIX"
+    -D HDF5_BUILD_CPP_LIB=ON
+    -D HDF5_BUILD_FORTRAN=ON
+    -D BUILD_SHARED_LIBS=ON
+    -D BUILD_STATIC_LIBS=ON
+    -D HDF5_BUILD_HL_LIB=ON
+    -D HDF5_BUILD_TOOLS=ON
+    -D HDF5_ENABLE_Z_LIB_SUPPORT=ON
+    -D HDF5_ENABLE_SZIP_SUPPORT=OFF
+    -D HDF5_ENABLE_THREADSAFE=ON
+    -D ALLOW_UNSUPPORTED=ON
+    -D ZLIB_DIR="$PREFIX"
+)
+
+# Apply extra flags for Linux only
+if [[ $(uname) == "Linux" ]]; then
+    cmake_flags+=(-D CMAKE_C_FLAGS="-pthread -Wl,-rpath,${PREFIX}/lib -L${PREFIX}/lib -lz")
 fi
-make install
+
+
+cmake -G "Unix Makefiles" "${cmake_flags[@]}" "$SRC_DIR"
+
+# Build C libraries and tools.
+cmake --build .
+cmake --install .
 
 rm -rf $PREFIX/share/hdf5_examples
+
+# Restore compatibility with hdf5 built with autotools
+# Create symlinks for libhdf5hl* from existing libhdf5_hl*
+for file in $PREFIX/lib/libhdf5_hl*; do
+    # Extract base filename
+    base_name=$(basename "$file")
+
+    # Replace "libhdf5_hl" with "libhdf5hl" in the filename
+    new_name="${base_name/libhdf5_hl/libhdf5hl}"
+
+    # Create symlink only if the destination does not exist
+    if [[ ! -e "$PREFIX/lib/$new_name" ]]; then
+        ln -s "$file" "$PREFIX/lib/$new_name"
+    fi
+done
