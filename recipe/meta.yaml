@@ -10,7 +10,7 @@ source:
   sha256: ec2e13c52e60f9a01491bb3158cb3778c985697131fc6a342262d32a26e58e44
 
 build:
-  number: 2
+  number: 3
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -23,12 +23,12 @@ requirements:
     - {{ compiler('cxx') }}
     - {{ compiler('fortran') }}
     - make  # [linux]
-    - cmake >=3.1 
+    - cmake >=3.1
   host:
     - zlib {{ zlib }}
-    - libcurl 7.88.1  # [not win]
+    - libcurl {{ libcurl }}  # [not win]
     - openssl {{ openssl }}  # [not win]
-    - libgfortran5 11.2.0  # [unix]
+    - libgfortran5 11.2.0    # [unix]
   run:
     - openssl 3.*  # [not win]
 
