@@ -1,16 +1,16 @@
-{% set version = "1.14.5" %}
-{% set maj_min_ver = ".".join(version.split(".")[:2]) %}
+{% set name = "hdf5" %}
+{% set version = "2.0.0" %}
 
 package:
-  name: hdf5
+  name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://github.com/HDFGroup/hdf5/releases/download/hdf5_{{ version }}/hdf5-{{ version }}.tar.gz
-  sha256: ec2e13c52e60f9a01491bb3158cb3778c985697131fc6a342262d32a26e58e44
+  url: https://github.com/HDFGroup/{{ name }}/releases/download/{{ version }}/{{ name }}-{{ version }}.tar.gz
+  sha256: f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed
 
 build:
-  number: 2
+  number: 0
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -23,12 +23,19 @@ requirements:
     - {{ compiler('cxx') }}
     - {{ compiler('fortran') }}
     - make  # [linux]
-    - cmake >=3.1 
+    - cmake
+    - pkg-config
   host:
-    - zlib {{ zlib }}
-    - libcurl 7.88.1  # [not win]
-    - openssl {{ openssl }}  # [not win]
-    - libgfortran5 11.2.0  # [unix]
+    - libgfortran5 14.3.0    # [unix]
+    - libcurl  {{ libcurl }}  # [not win]
+    - openssl  {{ openssl }}  # [not win]
+    - aws-c-auth {{ aws_c_auth }}
+    - aws-c-common {{ aws_c_common }}
+    - aws-c-http {{ aws_c_http }}
+    - aws-c-io {{ aws_c_io }}
+    - aws-c-s3 {{ aws_c_s3 }}
+    - aws-c-sdkutils {{ aws_c_sdkutils }}
+    - libzlib  {{ libzlib }}
   run:
     - openssl 3.*  # [not win]
 
@@ -47,7 +54,6 @@ test:
     - h5tutr_cmprss.cpp
     - h5_cmprss.f90
     - compound_fortran2003.f90
-
   commands:
     # Verify UNIX CLI tools.
     {% set hdf5_unix_cmds = [
@@ -89,8 +95,7 @@ test:
     ] %}
     {% for each_hdf5_lib in hdf5_libs %}
     - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}.a                           # [unix]
-    - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}.dylib                       # [osx]
-    - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}.so                          # [linux]
+    - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}${SHLIB_EXT}                 # [unix]
     - if not exist %PREFIX%\\Library\\lib\\{{ each_hdf5_lib }}.lib exit 1    # [win]
     - if not exist %PREFIX%\\Library\\bin\\{{ each_hdf5_lib }}.dll exit 1    # [win]
     {% endfor %}
@@ -126,12 +131,10 @@ test:
     - ./compound_fortran2003                                 # [unix]
 
 about:
-  home: https://www.hdfgroup.org/solutions/hdf5/
+  home: https://www.hdfgroup.org/solutions/hdf5
   license: OTHER
   license_family: BSD
-  license_file:
-    - COPYING
-    - COPYING_LBNL_HDF5
+  license_file: LICENSE
   summary: HDF5 is a data model, library, and file format for storing and managing data
   description: |
     HDF5 supports an unlimited variety of datatypes, and is designed for
