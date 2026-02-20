@@ -10,7 +10,7 @@ source:
   sha256: f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed
 
 build:
-  number: 0
+  number: 1
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
