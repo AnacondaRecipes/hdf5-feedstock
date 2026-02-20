@@ -19,6 +19,7 @@ cmake -G "NMake Makefiles" ^
       -D HDF5_ENABLE_Z_LIB_SUPPORT:BOOL=ON ^
       -D HDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF ^
       -D HDF5_ENABLE_THREADSAFE=ON ^
+      -D HDF5_ENABLE_ZLIB_SUPPORT=ON ^
       %SRC_DIR%
 if errorlevel 1 exit 1
 
