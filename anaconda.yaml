@@ -1,5 +1,5 @@
 anaconda_config_version: 1
 upstream_sources:
   - webpage:
-      url: https://portal.hdfgroup.org/display/support/Downloads
-      regex: HDF5\s([\d\.]*)
+      url: https://support.hdfgroup.org/releases/hdf5/index.html
+      regex: href='\./([\d.]+)/index\.html'
