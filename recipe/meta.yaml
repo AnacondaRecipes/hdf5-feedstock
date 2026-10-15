@@ -109,7 +109,6 @@ test:
     - echo "Testing h5cc"            # [unix]
     - h5cc -show                     # [unix]
     - h5cc h5_cmprss.c -o h5_cmprss  # [unix]
-    - export DYLD_LIBRARY_PATH=$PREFIX/lib:$DYLD_LIBRARY_PATH  # [osx]
     - export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH      # [linux]
     - ./h5_cmprss                    # [unix]
 
