@@ -10,7 +10,8 @@ source:
   sha256: 1a1ab8209b35586fbc1aa279ba76d102130b95badcb20ca329587219112d8c16
   patches:
     # Backport the ROS3 static dependency fix from https://github.com/HDFGroup/hdf5/pull/6617.
-    - patches/0001-fix-static-ros3-cmake-dependency.patch
+    # Static libraries are only built on Unix.
+    - patches/0001-fix-static-ros3-cmake-dependency.patch  # [unix]
 
 build:
   number: 0
