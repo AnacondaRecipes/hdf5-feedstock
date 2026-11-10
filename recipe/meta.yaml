@@ -1,16 +1,45 @@
 {% set name = "hdf5" %}
-{% set version = "2.0.0" %}
+{% set version = "2.2.0" %}
+{% set hdf5_unix_cmds = [
+  "h5c++",
+  "h5cc",
+  "h5perf_serial",
+  "h5fc"
+] %}
+{% set hdf5_cmds = [
+  "h5copy",
+  "h5debug",
+  "h5diff",
+  "h5dump",
+  "h5import",
+  "h5jam",
+  "h5ls",
+  "h5mkgrp",
+  "h5repack",
+  "h5repart",
+  "h5stat",
+  "h5unjam"
+] %}
+{% set hdf5_libs = [
+  "hdf5",
+  "hdf5_cpp",
+  "hdf5_hl",
+  "hdf5_hl_cpp"
+] %}
 
+# no explicit run deps.  zlib is one, and C/C++/Fortran runtimes are others, but these are taken care of
+#   with conda-build 3's run_exports in those packages.  They will be run reqs in the final package.  See
+#   for yourself by running conda render on this recipe.
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
   url: https://github.com/HDFGroup/{{ name }}/releases/download/{{ version }}/{{ name }}-{{ version }}.tar.gz
-  sha256: f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed
+  sha256: 1a1ab8209b35586fbc1aa279ba76d102130b95badcb20ca329587219112d8c16
 
 build:
-  number: 5
+  number: 0
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -26,7 +55,7 @@ requirements:
     - cmake
     - pkg-config
   host:
-    - libgfortran5 14.3.0    # [unix]
+    - libgfortran5 14.3.0  # [unix]
     - libcurl  {{ libcurl }}  # [not win]
     - openssl  {{ openssl }}  # [not win]
     - aws-c-auth {{ aws_c_auth }}
@@ -38,10 +67,6 @@ requirements:
     - libzlib  {{ libzlib }}
   run:
     - openssl 3.*  # [not win]
-
-# no explicit run deps.  zlib is one, and C/C++/Fortran runtimes are others, but these are taken care of
-#   with conda-build 3's run_exports in those packages.  They will be run reqs in the final package.  See
-#   for yourself by running conda render on this recipe.
 
 test:
   requires:
@@ -56,79 +81,38 @@ test:
     - compound_fortran2003.f90
   commands:
     # Verify UNIX CLI tools.
-    {% set hdf5_unix_cmds = [
-        "h5c++",
-        "h5cc",
-        "h5perf_serial",
-        "h5fc"
-    ] %}
-    {% for each_hdf5_unix_cmd in hdf5_unix_cmds %}
-    - command -v {{ each_hdf5_unix_cmd }}   # [unix]
-    {% endfor %}
-
+    - command -v {{ each_hdf5_unix_cmd }}  # [unix]
     # Verify CLI tools.
-    {% set hdf5_cmds = [
-        "h5copy",
-        "h5debug",
-        "h5diff",
-        "h5dump",
-        "h5import",
-        "h5jam",
-        "h5ls",
-        "h5mkgrp",
-        "h5repack",
-        "h5repart",
-        "h5stat",
-        "h5unjam"
-    ] %}
-    {% for each_hdf5_cmd in hdf5_cmds %}
-    - command -v {{ each_hdf5_cmd }}        # [unix]
-    - where {{ each_hdf5_cmd }}             # [win]
-    {% endfor %}
-
+    - command -v {{ each_hdf5_cmd }}  # [unix]
+    - where {{ each_hdf5_cmd }}  # [win]
     # Verify libraries.
-    {% set hdf5_libs = [
-        "hdf5",
-        "hdf5_cpp",
-        "hdf5_hl",
-        "hdf5_hl_cpp",
-    ] %}
-    {% for each_hdf5_lib in hdf5_libs %}
-    - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}.a                           # [unix]
-    - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}${SHLIB_EXT}                 # [unix]
-    - if not exist %PREFIX%\\Library\\lib\\{{ each_hdf5_lib }}.lib exit 1    # [win]
-    - if not exist %PREFIX%\\Library\\bin\\{{ each_hdf5_lib }}.dll exit 1    # [win]
-    {% endfor %}
-
+    - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}.a  # [unix]
+    - test -f $PREFIX/lib/lib{{ each_hdf5_lib }}${SHLIB_EXT}  # [unix]
+    - if not exist %PREFIX%\\Library\\lib\\{{ each_hdf5_lib }}.lib exit 1  # [win]
+    - if not exist %PREFIX%\\Library\\bin\\{{ each_hdf5_lib }}.dll exit 1  # [win]
     # Inspect linkages of HDF5.
-    {% for each_hdf5_lib in hdf5_libs %}
-    - otool -L $PREFIX/lib/lib{{ each_hdf5_lib }}.dylib                      # [osx]
-    {% endfor %}
-
+    - otool -L $PREFIX/lib/lib{{ each_hdf5_lib }}.dylib  # [osx]
     # Test C compiler
-    - echo "Testing h5cc"            # [unix]
-    - h5cc -show                     # [unix]
+    - echo "Testing h5cc"  # [unix]
+    - h5cc -show  # [unix]
     - h5cc h5_cmprss.c -o h5_cmprss  # [unix]
     - export DYLD_LIBRARY_PATH=$PREFIX/lib:$DYLD_LIBRARY_PATH  # [osx]
-    - export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH      # [linux]
-    - ./h5_cmprss                    # [unix]
-
+    - export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH  # [linux]
+    - ./h5_cmprss  # [unix]
     # Test C++ compiler
-    - echo "Testing h5c++"                      # [unix]
-    - h5c++ -show                               # [unix]
+    - echo "Testing h5c++"  # [unix]
+    - h5c++ -show  # [unix]
     - h5c++ h5tutr_cmprss.cpp -o h5tutr_cmprss  # [unix]
-    - ./h5tutr_cmprss                           # [unix]
-
+    - ./h5tutr_cmprss  # [unix]
     # Test Fortran 90 compiler
-    - echo "Testing h5fc"              # [unix]
-    - h5fc -show                       # [unix]
+    - echo "Testing h5fc"  # [unix]
+    - h5fc -show  # [unix]
     - h5fc h5_cmprss.f90 -o h5_cmprss  # [unix]
-    - ./h5_cmprss                      # [unix]
-
+    - ./h5_cmprss  # [unix]
     # Test Fortran 2003 compiler, note that the file has a 90 extension
-    - echo "Testing h5fc for Fortran 2003"                   # [unix]
+    - echo "Testing h5fc for Fortran 2003"  # [unix]
     - h5fc compound_fortran2003.f90 -o compound_fortran2003  # [unix]
-    - ./compound_fortran2003                                 # [unix]
+    - ./compound_fortran2003  # [unix]
 
 about:
   home: https://www.hdfgroup.org/solutions/hdf5
