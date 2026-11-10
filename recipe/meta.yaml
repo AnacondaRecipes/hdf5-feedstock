@@ -27,9 +27,9 @@ requirements:
     - cmake
     - pkg-config
   host:
-    - libgfortran5 14.3.0    # [unix]
-    - libcurl  {{ libcurl }}  # [not win]
-    - openssl  {{ openssl }}  # [not win]
+    - libgfortran5 14.3.0     # [unix]
+    - libcurl  {{ libcurl }}  # [unix]
+    - openssl  {{ openssl }}  # [unix]
     - aws-c-auth {{ aws_c_auth }}
     - aws-c-common {{ aws_c_common }}
     - aws-c-http {{ aws_c_http }}
@@ -38,7 +38,9 @@ requirements:
     - aws-c-sdkutils {{ aws_c_sdkutils }}
     - libzlib  {{ libzlib }}
   run:
-    - openssl 3.*  # [not win]
+    - openssl 3.*  # [unix]
+    # The h5cc, h5c++ and h5fc wrappers call pkg-config unconditionally (https://github.com/HDFGroup/hdf5/blob/2.2.0/config/libh5cc.in#L232-L236).
+    - pkg-config   # [unix]
 
 # no explicit run deps.  zlib is one, and C/C++/Fortran runtimes are others, but these are taken care of
 #   with conda-build 3's run_exports in those packages.  They will be run reqs in the final package.  See
@@ -47,7 +49,6 @@ requirements:
 test:
   requires:
     - compilers
-    - pkg-config  # [not win]
   files:
     - h5_cmprss.c
     - h5tutr_cmprss.cpp
