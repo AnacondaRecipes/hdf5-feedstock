@@ -19,6 +19,7 @@ build:
 
 requirements:
   build:
+    - {{ stdlib('c')}}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - {{ compiler('fortran') }}
@@ -45,9 +46,7 @@ requirements:
 
 test:
   requires:
-    - {{ compiler('c') }}
-    - {{ compiler('cxx') }}
-    - {{ compiler('fortran') }}
+    - compilers
     - pkg-config  # [not win]
   files:
     - h5_cmprss.c

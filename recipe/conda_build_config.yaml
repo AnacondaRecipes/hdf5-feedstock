@@ -2,3 +2,7 @@ fortran_compiler:          # [win]
   - flang                  # [win]
 fortran_compiler_version:  # [win]
   - "20"                   # [win]
+
+# Remove once main cbc is updated.
+aws_c_http:
+  - 1.1.1
