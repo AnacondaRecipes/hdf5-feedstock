@@ -131,9 +131,9 @@ test:
 
 about:
   home: https://www.hdfgroup.org/solutions/hdf5
-  license: OTHER
-  license_family: BSD
+  license: BSD-3-Clause AND BSD-1-Clause
   license_file: LICENSE
+  license_family: BSD
   summary: HDF5 is a data model, library, and file format for storing and managing data
   description: |
     HDF5 supports an unlimited variety of datatypes, and is designed for
