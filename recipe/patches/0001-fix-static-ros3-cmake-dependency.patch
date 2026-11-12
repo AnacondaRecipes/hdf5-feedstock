@@ -1,0 +1,30 @@
+From 432e2273d411ef4464c4a0febb2ed55a7afd86e4 Mon Sep 17 00:00:00 2001
+From: jhendersonHDF <jhenderson@hdfgroup.org>
+Date: Thu, 24 Sep 2026 11:41:22 -0500
+Subject: [PATCH] Fix static ROS3 CMake dependency resolution
+
+Partial backport of HDFGroup/hdf5#6617 for HDF5 2.2.0.
+Only the missing aws-c-s3 find_dependency for static ROS3 consumers
+is included.
+
+Upstream-commit: 32022649cc9b9b7f6e0199b13d50e2e5ae5f9f63
+---
+ config/install/hdf5-config.cmake.in | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/config/install/hdf5-config.cmake.in b/config/install/hdf5-config.cmake.in
+index 1049f0b..44e82bf 100644
+--- a/config/install/hdf5-config.cmake.in
++++ b/config/install/hdf5-config.cmake.in
+@@ -143,6 +143,11 @@ if (${HDF5_PACKAGE_NAME}_PROVIDES_SZIP_SUPPORT AND NOT @SZIP_USE_EXTERNAL@)
+   find_dependency (@LIBAEC_PACKAGE_NAME@ OPTIONAL_COMPONENTS @LIBAEC_SEARCH_TYPE@)
+ endif ()
+ 
++# aws-c-s3 is a private dependency of static libraries with ROS3 VFD support.
++if (${HDF5_PACKAGE_NAME}_PROVIDES_STATIC_LIBS AND ${HDF5_PACKAGE_NAME}_PROVIDES_ROS3_VFD)
++  find_dependency (aws-c-s3)
++endif ()
++
+ #-----------------------------------------------------------------------------
+ # Directories
+ #-----------------------------------------------------------------------------

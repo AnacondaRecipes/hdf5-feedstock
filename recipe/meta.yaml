@@ -1,5 +1,5 @@
 {% set name = "hdf5" %}
-{% set version = "2.0.0" %}
+{% set version = "2.2.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,10 +7,14 @@ package:
 
 source:
   url: https://github.com/HDFGroup/{{ name }}/releases/download/{{ version }}/{{ name }}-{{ version }}.tar.gz
-  sha256: f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed
+  sha256: 1a1ab8209b35586fbc1aa279ba76d102130b95badcb20ca329587219112d8c16
+  patches:
+    # Backport the ROS3 static dependency fix from https://github.com/HDFGroup/hdf5/pull/6617.
+    # Static libraries are only built on Unix.
+    - patches/0001-fix-static-ros3-cmake-dependency.patch  # [unix]
 
 build:
-  number: 5
+  number: 0
   run_exports:
     # hdf5 has historically broken API between bugfix revisions.  Pin it to be safe.
     #    This pinning is using the implicitly defined output for the top-level recipe.
@@ -19,6 +23,7 @@ build:
 
 requirements:
   build:
+    - {{ stdlib('c')}}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - {{ compiler('fortran') }}
@@ -26,9 +31,9 @@ requirements:
     - cmake
     - pkg-config
   host:
-    - libgfortran5 14.3.0    # [unix]
-    - libcurl  {{ libcurl }}  # [not win]
-    - openssl  {{ openssl }}  # [not win]
+    - libgfortran5 14.3.0     # [unix]
+    - libcurl  {{ libcurl }}  # [unix]
+    - openssl  {{ openssl }}  # [unix]
     - aws-c-auth {{ aws_c_auth }}
     - aws-c-common {{ aws_c_common }}
     - aws-c-http {{ aws_c_http }}
@@ -37,7 +42,9 @@ requirements:
     - aws-c-sdkutils {{ aws_c_sdkutils }}
     - libzlib  {{ libzlib }}
   run:
-    - openssl 3.*  # [not win]
+    - openssl 3.*  # [unix]
+    # The h5cc, h5c++ and h5fc wrappers call pkg-config unconditionally (https://github.com/HDFGroup/hdf5/blob/2.2.0/config/libh5cc.in#L232-L236).
+    - pkg-config   # [unix]
 
 # no explicit run deps.  zlib is one, and C/C++/Fortran runtimes are others, but these are taken care of
 #   with conda-build 3's run_exports in those packages.  They will be run reqs in the final package.  See
@@ -45,11 +52,11 @@ requirements:
 
 test:
   requires:
-    - {{ compiler('c') }}
-    - {{ compiler('cxx') }}
-    - {{ compiler('fortran') }}
-    - pkg-config  # [not win]
+    - compilers
+    - cmake  # [unix]
+    - make   # [unix]
   files:
+    - tests/CMakeLists.txt  # [unix]
     - h5_cmprss.c
     - h5tutr_cmprss.cpp
     - h5_cmprss.f90
@@ -85,6 +92,8 @@ test:
     - command -v {{ each_hdf5_cmd }}        # [unix]
     - where {{ each_hdf5_cmd }}             # [win]
     {% endfor %}
+    - h5dump --version  # [win]
+    - h5ls --version    # [win]
 
     # Verify libraries.
     {% set hdf5_libs = [
@@ -109,7 +118,6 @@ test:
     - echo "Testing h5cc"            # [unix]
     - h5cc -show                     # [unix]
     - h5cc h5_cmprss.c -o h5_cmprss  # [unix]
-    - export DYLD_LIBRARY_PATH=$PREFIX/lib:$DYLD_LIBRARY_PATH  # [osx]
     - export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH      # [linux]
     - ./h5_cmprss                    # [unix]
 
@@ -130,11 +138,16 @@ test:
     - h5fc compound_fortran2003.f90 -o compound_fortran2003  # [unix]
     - ./compound_fortran2003                                 # [unix]
 
+    # Test the static library through the installed CMake package.
+    - cmake -S tests -B cmake-build -D CMAKE_PREFIX_PATH="$PREFIX"  # [unix]
+    - cmake --build cmake-build                                 # [unix]
+    - ./cmake-build/hdf5_static_consumer                        # [unix]
+
 about:
   home: https://www.hdfgroup.org/solutions/hdf5
-  license: OTHER
-  license_family: BSD
+  license: BSD-3-Clause AND BSD-1-Clause
   license_file: LICENSE
+  license_family: BSD
   summary: HDF5 is a data model, library, and file format for storing and managing data
   description: |
     HDF5 supports an unlimited variety of datatypes, and is designed for
