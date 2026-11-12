@@ -56,7 +56,7 @@ test:
     - cmake  # [unix]
     - make   # [unix]
   files:
-    - CMakeLists.txt  # [unix]
+    - tests/CMakeLists.txt  # [unix]
     - h5_cmprss.c
     - h5tutr_cmprss.cpp
     - h5_cmprss.f90
@@ -139,7 +139,7 @@ test:
     - ./compound_fortran2003                                 # [unix]
 
     # Test the static library through the installed CMake package.
-    - cmake -S . -B cmake-build -D CMAKE_PREFIX_PATH="$PREFIX"  # [unix]
+    - cmake -S tests -B cmake-build -D CMAKE_PREFIX_PATH="$PREFIX"  # [unix]
     - cmake --build cmake-build                                 # [unix]
     - ./cmake-build/hdf5_static_consumer                        # [unix]
 
